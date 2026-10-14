@@ -1,0 +1,11 @@
+# 模块脚本在 Android 上用 busybox sh 执行，必须是 Unix(LF) 行尾。
+# 本仓库常年在 Windows(Git autocrlf) 上编辑，故显式强制所有文本为 LF。
+* text=auto eol=lf
+*.sh    text eol=lf
+*.prop  text eol=lf
+*.conf  text eol=lf
+*.html  text eol=lf
+*.example text eol=lf
+*.example text
+# 二进制保持原样
+nginx/nginx  binary

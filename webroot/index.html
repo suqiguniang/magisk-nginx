@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="color-scheme" content="dark light">
+<title>Nginx 管理页</title>
+<style>
+  :root {
+    --bg:#0f1220; --fg:#e8ecf6; --mut:#98a1b8; --card:#171b2c;
+    --line:rgba(140,150,190,.18); --acc:#ffb648; --acc2:#4ea1ff;
+  }
+  @media (prefers-color-scheme: light) {
+    :root { --bg:#f4f6fb; --fg:#1b2130; --mut:#5a6377; --card:#ffffff;
+            --line:rgba(90,100,140,.15); }
+  }
+  * { box-sizing:border-box; }
+  html,body { height:100%; margin:0; }
+  body {
+    background:var(--bg); color:var(--fg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans SC",sans-serif;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:24px; text-align:center; gap:8px;
+  }
+  .wrap { width:100%; max-width:420px; }
+  .card {
+    background:var(--card); border:1px solid var(--line); border-radius:20px;
+    padding:30px 24px 24px; box-shadow:0 18px 50px rgba(0,0,0,.35);
+  }
+  svg { width:100%; height:auto; display:block; }
+  h1 { font-size:22px; margin:14px 0 4px; letter-spacing:.02em; }
+  .sub { color:var(--mut); font-size:13.5px; margin:0; line-height:1.6; }
+  .meta {
+    margin-top:16px; display:flex; flex-wrap:wrap; gap:8px; justify-content:center;
+  }
+  .chip {
+    background:rgba(140,150,190,.10); border:1px solid var(--line);
+    border-radius:999px; padding:5px 12px; font-size:12px; color:var(--mut);
+  }
+  .chip b { color:var(--fg); font-weight:600; }
+  /* 施工警示条动画 */
+  .stripe rect { animation:slide 1.6s linear infinite; }
+  @keyframes slide { to { transform:translateX(34px); } }
+  .cone { transform-origin:170px 168px; animation:bob 1.8s ease-in-out infinite; }
+  @keyframes bob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
+  .spark { animation:tw 1.1s ease-in-out infinite; transform-origin:center; }
+  @keyframes tw { 0%,100%{opacity:.25} 50%{opacity:1} }
+  .note {
+    margin-top:18px; font-size:12px; color:var(--mut); line-height:1.7;
+    background:rgba(140,150,190,.06); border:1px dashed var(--line);
+    border-radius:12px; padding:10px 12px; text-align:left;
+  }
+  .note code { background:rgba(140,150,190,.16); border-radius:5px; padding:1px 5px; font-size:11px; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <!-- 自包含 SVG：施工路障 + 警示条 + 锥体，无外部依赖 -->
+      <svg viewBox="0 0 340 190" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="施工中路障">
+        <defs>
+          <linearGradient id="gA" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#ffb648"/><stop offset="1" stop-color="#ff8c3a"/>
+          </linearGradient>
+          <pattern id="tape" width="34" height="34" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+            <rect width="17" height="34" fill="#ffb648"/>
+            <rect x="17" width="17" height="34" fill="#1b1f2e"/>
+          </pattern>
+        </defs>
+
+        <!-- 地面 -->
+        <ellipse cx="170" cy="176" rx="130" ry="12" fill="rgba(140,150,190,.14)"/>
+
+        <!-- 警示横条 -->
+        <g class="stripe">
+          <clipPath id="c1"><rect x="60" y="96" width="220" height="22" rx="6"/></clipPath>
+          <rect x="46" y="96" width="248" height="22" rx="6" fill="url(#tape)" clip-path="url(#c1)"/>
+        </g>
+        <!-- 支撑腿 -->
+        <rect x="86"  y="118" width="12" height="52" rx="4" fill="url(#gA)"/>
+        <rect x="242" y="118" width="12" height="52" rx="4" fill="url(#gA)"/>
+        <rect x="70"  y="164" width="44" height="8"  rx="4" fill="#2a3050"/>
+        <rect x="226" y="164" width="44" height="8"  rx="4" fill="#2a3050"/>
+
+        <!-- 路锥 -->
+        <g class="cone">
+          <polygon points="170,44 146,160 194,160" fill="url(#gA)"/>
+          <polygon points="170,44 159,120 181,120" fill="#fff" opacity=".85"/>
+          <rect x="138" y="158" width="64" height="10" rx="5" fill="#e0812f"/>
+        </g>
+
+        <!-- 星星 / 施工标记 -->
+        <g class="spark">
+          <circle cx="120" cy="60" r="3.4" fill="#ffb648"/>
+          <circle cx="232" cy="58" r="2.6" fill="#ffb648"/>
+          <circle cx="210" cy="38" r="2" fill="#ffb648"/>
+        </g>
+      </svg>
+
+      <h1>管理页施工中</h1>
+      <p class="sub">Nginx 引擎已就绪，Web 管理界面正在建设。</p>
+
+      <div class="meta">
+        <div class="chip">模块 <b id="modName">Nginx for Android</b></div>
+        <div class="chip">版本 <b id="modVer">-</b></div>
+        <div class="chip">Nginx <b>1.21.6</b></div>
+      </div>
+
+      <div class="note">
+        反向代理 / 静态服务已可用。配置目录：<code>/data/adb/nginx/conf/</code><br>
+        在「执行」菜单可用音量键 <b>启动 / 停止 / 重启</b> nginx。
+      </div>
+    </div>
+  </div>
+
+<script>
+(function () {
+  // KernelSU / APatch / KernelSU-Next 会注入全局桥 ksu；官方 Magisk 没有。
+  function set(id, v) { var el = document.getElementById(id); if (el && v != null) el.textContent = v; }
+  if (typeof ksu !== "undefined" && ksu.moduleInfo) {
+    try {
+      var info = JSON.parse(ksu.moduleInfo());
+      set("modName", info.name || "Nginx for Android");
+      set("modVer",  info.version || "v1.21.6.1");
+    } catch (e) { /* 解析失败则保留占位文案 */ }
+  } else {
+    set("modVer", "v1.21.6.1");
+  }
+})();
+</script>
+</body>
+</html>

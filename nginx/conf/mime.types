@@ -1,0 +1,76 @@
+types {
+    text/html                             html htm shtml;
+    text/css                              css;
+    text/xml                              xml;
+    image/gif                             gif;
+    image/jpeg                            jpeg jpg;
+    application/javascript                 js;
+    application/atom+xml                  atom;
+    application/rss+xml                   rss;
+
+    text/mathml                           mml;
+    text/plain                            txt;
+    text/vnd.sun.j2dapp                   sag;
+
+    image/png                             png;
+    image/tiff                            tif tiff;
+    image/vnd.wap.wbmp                    wbmp;
+    image/webp                            webp;
+    image/x-icon                          ico;
+    image/x-jng                           jng;
+    image/x-ms-bmp                        bmp;
+
+    font/woff                             woff;
+    font/woff2                            woff2;
+    application/font-otf                  otf;
+    application/vnd.ms-fontobject         eot;
+
+    audio/midi                            mid midi kar;
+    audio/mpeg                            mp3;
+    audio/ogg                             ogg;
+    audio/x-m4a                           m4a;
+    audio/x-realaudio                     ra;
+
+    video/mp4                             mp4;
+    video/mpeg                            mpg;
+    video/quicktime                       mov;
+    video/webm                            webm;
+    video/x-m4v                           m4v;
+    video/x-ms-asf                        asx asf;
+    video/x-ms-wmv                        wmv;
+    video/x-msvideo                       avi;
+
+    application/java                      jar;
+    application/json                      json;
+    application/mac-binhex40              hqx;
+    application/msword                    doc;
+    application/octet-stream              bin dms lrf mar so;
+    application/octet-stream              iso img;
+    application/octet-stream              msi msp;
+    application/pdf                       pdf;
+    application/postscript                ai eps ps;
+    application/rtf                       rtf;
+    application/vnd.google-earth.kml+xml  kml;
+    application/vnd.google-earth.kmz      kmz;
+    application/vnd.ms-excel              xls;
+    application/vnd.ms-powerpoint         ppt;
+    application/vnd.rn-realtext           rt;
+    application/vnd.wap.wmlc              wmlc;
+    application/vnd.wap.wbxml             wbx;
+    application/vnd.wap.wmlscriptc        wmlsc;
+    application/x-7z-compressed           7z;
+    application/x-cocoa                   cco;
+    application/x-java-archive-diff       jardiff;
+    application/x-java-jnlp-file          jnlp;
+    application/x-makeself                run;
+    application/x-perl                    pl pm;
+    application/x-pilot                   prc pdb;
+    application/x-rar-compressed          rar;
+    application/x-shockwave-flash         swf;
+    application/x-stuffit                 sit;
+    application/x-tcl                     tcl tk;
+    application/x-x509-ca-cert            der crt;
+    application/zip                       zip;
+    application/xml                       xsl xml dtd;
+    application/xslt+xml                  xslt;
+}

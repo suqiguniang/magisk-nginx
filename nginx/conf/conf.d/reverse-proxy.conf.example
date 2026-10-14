@@ -1,0 +1,59 @@
+# ===========================================================================
+# 反向代理示例：把对 example.com 的请求转发到本机 8080。
+#
+# 启用方法：把本文件重命名为  .conf  结尾(例如 reverse-proxy.conf)，
+# 再在「执行」里选择「重启 nginx」，或运行：
+#     nginx -p /data/adb/nginx -c /data/adb/nginx/conf/nginx.conf -s reload
+# 停用方法：改回 .example 后缀后 reload。
+#
+# 说明：端口 80 属特权端口，root 运行可绑定；若 80 被系统占用，
+#       把下面的 listen 改成其它端口(如 8000)即可。
+# ===========================================================================
+
+server {
+    listen       80;
+    # listen       [::]:80;
+    server_name  example.com;
+
+    # 如需 HTTPS(证书放 /data/adb/nginx/conf/ssl/)：
+    # listen 443 ssl;
+    # ssl_certificate     conf/ssl/example.com.crt;
+    # ssl_certificate_key conf/ssl/example.com.key;
+
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+
+        # 透传原始信息给后端
+        proxy_http_version      1.1;
+        proxy_set_header        Host              $host;
+        proxy_set_header        X-Real-IP         $remote_addr;
+        proxy_set_header        X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header        X-Forwarded-Proto $scheme;
+
+        # WebSocket 支持
+        proxy_set_header        Upgrade           $http_upgrade;
+        proxy_set_header        Connection        "upgrade";
+
+        # 超时
+        proxy_connect_timeout   30s;
+        proxy_read_timeout      60s;
+        proxy_send_timeout      60s;
+        proxy_buffering         off;
+    }
+}
+
+# ---------------------------------------------------------------------------
+# 多域名 / 多后端分路示例(按需复制修改)：
+# ---------------------------------------------------------------------------
+# server {
+#     listen 80;
+#     server_name api.example.com;
+#     location /api/ {
+#         proxy_pass http://127.0.0.1:3000;   # 后端 A
+#         proxy_set_header Host $host;
+#     }
+#     location / {
+#         proxy_pass http://127.0.0.1:3001;   # 后端 B
+#         proxy_set_header Host $host;
+#     }
+# }
