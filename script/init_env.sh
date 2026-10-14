@@ -4,10 +4,11 @@
 # 兼容 Magisk / KernelSU / APatch；目标 busybox sh (ash)。
 #
 # 重要设计：nginx 以「非 root 用户」运行(默认 uid/gid 2000 = shell)。
-# 原因：本模块内置的 anmpp nginx 是 **静态链接 glibc** 构建，其 getpwnam() 依赖
-# 运行时 dlopen NSS 模块，静态二进制做不到 → 只要以 root 运行(nginx 会去解析
-# worker 降权用户)就必然 [emerg] getpwnam(...) failed 起不来。非 root 运行时
-# nginx 会整个跳过用户解析，因此稳定可用(anmpp 自身也是以普通 uid 运行)。
+# 原因：以 root 启动时 nginx 会调用 getpwnam() 解析 worker 降权用户(默认 nobody)。
+# Android(尤其 15+)的 /system/etc/passwd 被系统裁剪，没有 root/nobody 条目；
+# 且静态二进制的 passwd 查找本来就不可靠(旧版 anmpp glibc 构建实测 getpwnam
+# 恒失败，补条目/挂载 passwd 均无效)。因此 root 启动必然 [emerg]。
+# 非 root 运行时 nginx 整个跳过用户解析，稳定可用(anmpp 等同类项目亦然)。
 # 代价：非 root 无法绑定 <1024 的端口，需要监听 80/443 时见 apply_low_port_policy。
 
 # ---------------------------------------------------------------------------

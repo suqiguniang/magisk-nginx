@@ -9,3 +9,6 @@ dist/
 # 本地构建缓存
 __pycache__/
 *.pyc
+
+# 本地测试草稿
+.test/

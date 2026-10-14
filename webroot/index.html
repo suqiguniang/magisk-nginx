@@ -103,7 +103,7 @@
       <div class="meta">
         <div class="chip">模块 <b id="modName">Nginx for Android</b></div>
         <div class="chip">版本 <b id="modVer">-</b></div>
-        <div class="chip">Nginx <b>1.21.6</b></div>
+        <div class="chip">Nginx <b>1.29.1</b></div>
       </div>
 
       <div class="note">
@@ -121,10 +121,10 @@
     try {
       var info = JSON.parse(ksu.moduleInfo());
       set("modName", info.name || "Nginx for Android");
-      set("modVer",  info.version || "v1.21.6.1");
+      set("modVer",  info.version || "v1.29.1.1");
     } catch (e) { /* 解析失败则保留占位文案 */ }
   } else {
-    set("modVer", "v1.21.6.1");
+    set("modVer", "v1.29.1.1");
   }
 })();
 </script>

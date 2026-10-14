@@ -1,6 +1,6 @@
 id=magisk-nginx
 name=Nginx for Android
-version=v1.21.6.2
-versionCode=1216002
+version=v1.29.1.1
+versionCode=1291001
 author=ZCode / Agnes-3.0
-description=Nginx 1.21.6 (arm64 静态编译) 反向代理/静态服务器，内置开机自启 + 「执行」音量键控制(启动/停止/重启) + 「打开」WebUI 占位页。运行目录 /data/nginx，以非 root 身份运行。
+description=Nginx 1.29.1 (arm64 静态 bionic, OpenSSL 1.1.1w) 反向代理/静态服务器/HTTPS，内置开机自启 + 「执行」音量键控制(启动/停止/重启) + 「打开」WebUI 占位页。运行目录 /data/nginx，非 root 运行。

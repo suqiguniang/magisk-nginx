@@ -4,7 +4,7 @@
 # 在 Windows(Git Bash) / Linux / Termux 上运行：需要 bash + python
 # （--fetch 需要 curl，行尾规范化需要 dos2unix 或 python）
 # 用法：  sh build.sh            # 使用已就位的 nginx/nginx(本仓库已内置)
-#         sh build.sh --fetch    # 缺失时先从 anmpp 下载二进制
+#         sh build.sh --fetch    # 缺失时先从 Dirinkbottle release 下载二进制
 # 产物：  dist/magisk-nginx.zip
 # ===========================================================================
 set -euo pipefail
@@ -14,23 +14,15 @@ cd "$ROOT"
 BIN="nginx/nginx"
 OUT="$ROOT/dist/magisk-nginx.zip"
 
-NG_URL="https://raw.githubusercontent.com/xiaoqidun/anmpp/main/binary/nginx_1.21.6_arm64.bz2"
+# nginx 1.29.1 arm64 静态 bionic 构建(NDK r29, OpenSSL 1.1.1w)
+# 来源: https://github.com/Dirinkbottle/nginx-for-andorid-aarch64 (release v1.0.0)
+NG_URL="https://github.com/Dirinkbottle/nginx-for-andorid-aarch64/releases/download/v1.0.0/nginx-android-aarch64"
+NG_VERSION="nginx/1.29.1"
 
 # --- 可选：拉取二进制 -------------------------------------------------------
 if [ "${1:-}" = "--fetch" ] && [ ! -f "$BIN" ]; then
-    echo "[*] 下载 anmpp nginx 1.21.6 arm64 ..."
-    tmp="$ROOT/.tmp.nginx.bz2"
-    curl -L --fail --retry 3 -o "$tmp" "$NG_URL"
-    if command -v bzip2 >/dev/null 2>&1; then
-        bzip2 -dc "$tmp" > "$BIN"
-    else
-        python - "$tmp" "$BIN" <<'PY'
-import bz2, sys
-src, dst = sys.argv[1], sys.argv[2]
-open(dst, "wb").write(bz2.decompress(open(src, "rb").read()))
-PY
-    fi
-    rm -f "$tmp"
+    echo "[*] 下载 nginx $NG_VERSION (arm64 静态 bionic) ..."
+    curl -L --fail --retry 3 -o "$BIN" "$NG_URL"
     chmod 755 "$BIN"
 fi
 
@@ -38,7 +30,7 @@ fi
 # 用 python 直接解析 ELF(无 file/strings 依赖，Termux 也能跑)：
 #   - 必须是 64 位 aarch64
 #   - 必须静态(无 PT_INTERP / PT_DYNAMIC)
-#   - 必须带 nginx/1.21.6 版本串
+#   - 必须带 nginx/1.29.1 版本串
 [ -f "$BIN" ] || { echo "[x] 缺少 $BIN，请先运行: sh build.sh --fetch"; exit 1; }
 echo "[*] 校验二进制 ..."
 python - "$BIN" <<'PY'
@@ -54,14 +46,14 @@ phnum, = struct.unpack_from("<H", d, 0x38)
 for i in range(phnum):
     t, = struct.unpack_from("<I", d, phoff + i * phentsz)
     assert t not in (2, 3), "含动态段(PT_DYNAMIC/PT_INTERP)，非静态链接"
-assert b"nginx/1.21.6" in d, "找不到 nginx/1.21.6 版本串"
-print("  ELF 校验通过: aarch64 64-bit, 静态, nginx/1.21.6")
+assert b"nginx/1.29.1" in d, "找不到 nginx/1.29.1 版本串"
+print("  ELF 校验通过: aarch64 64-bit, 静态, nginx/1.29.1")
 PY
 if command -v file >/dev/null 2>&1; then
     file "$BIN"
 fi
 chmod 755 "$BIN"
-echo "[ok] 二进制 OK (nginx 1.21.6, arm64 静态)"
+echo "[ok] 二进制 OK (nginx 1.29.1, arm64 静态, OpenSSL 1.1.1w)"
 
 # --- 2) 行尾规范化：所有文本文件 -> LF (绝不动二进制) -----------------------
 echo "[*] 规范化行尾为 LF ..."
@@ -129,8 +121,11 @@ MANIFEST = [
     ("nginx/conf/nginx.conf",                0o644),
     ("nginx/conf/mime.types",                0o644),
     ("nginx/conf/conf.d/00-default.conf",    0o644),
+    ("nginx/conf/conf.d/01-https.conf.example", 0o644),
     ("nginx/conf/conf.d/reverse-proxy.conf.example", 0o644),
-    ("nginx/html/index.html",                0o644),
+    ("nginx/conf/ssl/selfsigned.crt",       0o644),
+    ("nginx/conf/ssl/selfsigned.key",       0o600),
+    ("nginx/html/index.html",               0o644),
     ("webroot/index.html",                   0o644),
     ("META-INF/com/google/android/update-binary", 0o755),
     ("META-INF/com/google/android/updater-script",  0o644),

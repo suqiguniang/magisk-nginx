@@ -19,10 +19,11 @@ server {
     # listen       [::]:80;
     server_name  example.com;
 
-    # 如需 HTTPS(证书放 /data/nginx/conf/ssl/)：
+    # HTTPS(80/443 需先 touch /data/nginx/allow-low-ports)：
+    #   完整示例见同目录 01-https.conf.example(自带测试用自签证书)
     # listen 443 ssl;
-    # ssl_certificate     conf/ssl/example.com.crt;
-    # ssl_certificate_key conf/ssl/example.com.key;
+    # ssl_certificate     /data/nginx/conf/ssl/selfsigned.crt;
+    # ssl_certificate_key /data/nginx/conf/ssl/selfsigned.key;
 
     location / {
         proxy_pass http://127.0.0.1:8080;
