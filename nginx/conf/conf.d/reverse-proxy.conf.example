@@ -3,11 +3,15 @@
 #
 # 启用方法：把本文件重命名为  .conf  结尾(例如 reverse-proxy.conf)，
 # 再在「执行」里选择「重启 nginx」，或运行：
-#     nginx -p /data/adb/nginx -c /data/adb/nginx/conf/nginx.conf -s reload
+#     setuidgid 2000:2000 /data/nginx/nginx -p /data/nginx \
+#         -c /data/nginx/conf/nginx.conf -s reload
 # 停用方法：改回 .example 后缀后 reload。
 #
-# 说明：端口 80 属特权端口，root 运行可绑定；若 80 被系统占用，
-#       把下面的 listen 改成其它端口(如 8000)即可。
+# 关于 80 端口：nginx 以非 root 用户运行，默认不能绑定 <1024 的端口。
+# 需要监听 80/443 时，执行(或让模块开机时自动执行)：
+#     touch /data/nginx/allow-low-ports
+#     echo 80 > /proc/sys/net/ipv4/ip_unprivileged_port_start
+# 详见 README「监听 80/443 低端口」。
 # ===========================================================================
 
 server {
@@ -15,7 +19,7 @@ server {
     # listen       [::]:80;
     server_name  example.com;
 
-    # 如需 HTTPS(证书放 /data/adb/nginx/conf/ssl/)：
+    # 如需 HTTPS(证书放 /data/nginx/conf/ssl/)：
     # listen 443 ssl;
     # ssl_certificate     conf/ssl/example.com.crt;
     # ssl_certificate_key conf/ssl/example.com.key;

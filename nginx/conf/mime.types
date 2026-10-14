@@ -71,6 +71,6 @@ types {
     application/x-tcl                     tcl tk;
     application/x-x509-ca-cert            der crt;
     application/zip                       zip;
-    application/xml                       xsl xml dtd;
+    application/xml                       xsl dtd;
     application/xslt+xml                  xslt;
 }

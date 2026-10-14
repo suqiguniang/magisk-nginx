@@ -22,20 +22,22 @@ chmod 755 $MODPATH/*.sh $MODPATH/META-INF/com/google/android/* 2>/dev/null
 
 # 加载路径 / busybox / 控制函数
 . "$MODDIR/script/init_env.sh"
-export NG_PREFIX NG_CONF NG_BIN NG_LOG_DIR
+export NG_PREFIX NG_CONF NG_BIN NG_LOG_DIR NG_UID NG_GID NG_RUN
 
-# 在 /data/adb/nginx 播种运行时目录(缺失才复制，保留用户改动)
+# 在 /data/nginx 播种运行时目录(缺失才复制，保留用户改动；会迁移 v1 的 /data/adb/nginx)
 seed_runtime
 
 # 清空旧日志
 : > "$NG_LOG_DIR/install.log"
-echo "installed" >> "$NG_LOG_DIR/install.log"
+echo "installed $(date '+%Y-%m-%d %H:%M:%S')" >> "$NG_LOG_DIR/install.log"
 
 ui_print "---------------- Nginx for Android ----------------"
 ui_print "- 架构: $ARCH (arm64)"
 ui_print "- 运行目录: $NG_PREFIX"
+ui_print "- 运行身份: uid=$NG_UID (非 root，静态 glibc 二进制无法以 root 运行)"
 ui_print "- 默认监听端口: 8080"
 ui_print "- 开机自动启动；「执行」中可用音量键控制"
+ui_print "- 需监听 80/443？见 README「监听低端口」"
 ui_print "----------------------------------------------------"
 
 # 说明：不对 webroot/ 做任何权限处理 —— KernelSU/APatch 会自行设置其权限与
